@@ -121,32 +121,32 @@ for ip, user, passw in zip(mylistIP, mylistUser, mylistPass):
     output = output + net_connect.send_command('show buffers')
 
     #Parse
-    hostname = re.findall(r'^hostname (.*)\s*', output, re.I | re.M)
-    PID = re.findall(r'\s*PID:(.*),\sVID', output, re.I | re.M)
-    Description = re.findall(r'\sDESCR:\s*(.*)\s*', output, re.I | re.M)
-    SN = re.findall(r'\s*SN:\s*(.*)\s*', output, re.I | re.M)
-    IOS = re.findall(r'\((.*)\),\sVersion', output, re.I | re.M)
-    Version = re.findall(r'\sVersion\s(.*),', output, re.I | re.M)
-    Uptime = re.findall(r'\s*uptime\sis\s(.*)', output, re.I | re.M)
-    DRAM = re.findall(r'\swith\s(.*)\/', output, re.I | re.M)
-    MemTot = re.findall(r'^Processor\s+\w+\s+(\d+)\s+', output, re.I|re.M)
-    MemUse = re.findall(r'^Processor\s+\w+\s+\d+\s+(\d+)\s+', output, re.I|re.M)
-    MemFree = re.findall(r'^Processor\s+\w+\s+\d+\s+\d+\s+(\d+)\s+', output, re.I|re.M)
-    Cpu5sec = re.findall(r'\sfive\sseconds:\s(.*);\sone', output, re.I|re.M)
-    Cpu1min = re.findall(r'\sone\sminute:\s(.*);\sfive', output, re.I|re.M)
-    Cpu5min = re.findall(r'\sfive\sminutes:\s(.*)\s*', output, re.I|re.M)
-    smallhits = re.findall(r'^Small.*\s+.*\s+(\d+)\s+hits,', output, re.I|re.M)
-    smallmiss = re.findall(r'^Small.*\s+.*\s+.*(\d+)\s+misses,', output, re.I|re.M)
-    middlehits = re.findall(r'^Middle.*\s+.*\s+(\d+)\s+hits,', output, re.I|re.M)
-    middlemiss = re.findall(r'^Middle.*\s+.*\s+.*(\d+)\s+misses,', output, re.I|re.M)
-    bighits = re.findall(r'^Big.*\s+.*\s+(\d+)\s+hits,', output, re.I|re.M)
-    bigmiss = re.findall(r'^Big.*\s+.*\s+.*(\d+)\s+misses,', output, re.I|re.M)
-    verybighits = re.findall(r'^VeryBig.*\s+.*\s+(\d+)\s+hits,', output, re.I|re.M)
-    verybigmiss = re.findall(r'^VeryBig.*\s+.*\s+.*(\d+)\s+misses,', output, re.I|re.M)
-    largehits = re.findall(r'^Large.*\s+.*\s+(\d+)\s+hits,', output, re.I|re.M)
-    largemiss = re.findall(r'^Large.*\s+.*\s+.*(\d+)\s+misses,', output, re.I|re.M)
-    hugehits = re.findall(r'^Huge.*\s+.*\s+(\d+)\s+hits,', output, re.I|re.M)
-    hugemiss = re.findall(r'^Huge.*\s+.*\s+.*(\d+)\s+misses,', output, re.I|re.M)
+    hostname = re.findall(r'^hostname (.*)\s+', output, re.I | re.M)
+    PID = re.findall(r'\s*PID:(.*)\s*,\sVID', output, re.I | re.M)
+    Description = re.findall(r',\s+DESCR:(.*)\s+', output, re.I | re.M)
+    SN = re.findall(r',\s+SN:(.*)\s+', output, re.I | re.M)
+    IOS = re.findall(r'^Cisco IOS Software,.*\s+\((.*)\),\s+', output, re.I | re.M)
+    Version = re.findall(r'^Cisco IOS Software.*,\s+Version\s+(.*),\s+', output, re.I | re.M)
+    Uptime = re.findall(r'\s*uptime is\s+(.*)\s*', output, re.I | re.M)
+    DRAM = re.findall(r'^cisco.*processor.*\swith\s(.*)\/', output, re.I | re.M)
+    MemTot = re.findall(r'^Processor\s+\w+\s+(\d+)\s+', output, re.I | re.M)
+    MemUse = re.findall(r'^Processor\s+\w+\s+\d+\s+(\d+)\s+', output, re.I | re.M)
+    MemFree = re.findall(r'^Processor\s+\w+\s+\d+\s+\d+\s+(\d+)\s+', output, re.I | re.M)
+    Cpu5sec = re.findall(r'\sfive\sseconds:\s(.*);\sone', output, re.I | re.M)
+    Cpu1min = re.findall(r'\sone\sminute:\s(.*);\sfive', output, re.I | re.M)
+    Cpu5min = re.findall(r'\sfive\sminutes:\s(.*)\s*', output, re.I | re.M)
+    smallhits = re.findall(r'^Small.*\s+.*\s+(\d+)\s+hits,', output, re.I | re.M)
+    smallmiss = re.findall(r'^Small.*\s+.*\s+.*(\d+)\s+misses,', output, re.I | re.M)
+    middlehits = re.findall(r'^Middle.*\s+.*\s+(\d+)\s+hits,', output, re.I | re.M)
+    middlemiss = re.findall(r'^Middle.*\s+.*\s+.*(\d+)\s+misses,', output, re.I | re.M)
+    bighits = re.findall(r'^Big.*\s+.*\s+(\d+)\s+hits,', output, re.I | re.M)
+    bigmiss = re.findall(r'^Big.*\s+.*\s+.*(\d+)\s+misses,', output, re.I | re.M)
+    verybighits = re.findall(r'^VeryBig.*\s+.*\s+(\d+)\s+hits,', output, re.I | re.M)
+    verybigmiss = re.findall(r'^VeryBig.*\s+.*\s+.*(\d+)\s+misses,', output, re.I | re.M)
+    largehits = re.findall(r'^Large.*\s+.*\s+(\d+)\s+hits,', output, re.I | re.M)
+    largemiss = re.findall(r'^Large.*\s+.*\s+.*(\d+)\s+misses,', output, re.I | re.M)
+    hugehits = re.findall(r'^Huge.*\s+.*\s+(\d+)\s+hits,', output, re.I | re.M)
+    hugemiss = re.findall(r'^Huge.*\s+.*\s+.*(\d+)\s+misses,', output, re.I | re.M)
 
 
     #sheet Device
@@ -204,7 +204,8 @@ for ip, user, passw in zip(mylistIP, mylistUser, mylistPass):
                 # ws2.cell(row=row, column=col + y).number_format = '0'
         col2 += 1
     ws2["E3"] = "=IF(ISERROR(C3/B3),0,(C3/B3)*100)"
-    ws2["F3"] = """=IF((VALUE(I3)*100)<=40,"Excellent",IF((VALUE(I3)*100)<=60,"Good",IF((VALUE(I3)*100)<=80,"Fair","Poor")))"""
+    ws2["F3"] = """=IF(E3<=40,"Excellent",IF(E3<=60,"Good",IF(E3<=80,"Fair","Poor")))"""
+    ws2["J3"] = """=IF((VALUE(I3)*100)<=40,"Excellent",IF((VALUE(I3)*100)<=60,"Good",IF((VALUE(I3)*100)<=80,"Fair","Poor")))"""
 
     #Sheet Buffer
     dicthost = dict(HostList=hostname)
