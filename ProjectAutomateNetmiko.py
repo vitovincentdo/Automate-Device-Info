@@ -305,22 +305,18 @@ for ip, user, passw in zip(mylistIP, mylistUser, mylistPass):
 
 wb.save('OutputData.xlsx')
 
+# wb3 = openpyxl.load_workbook('OutputData.xlsx', data_only=True)
+# rs2 = wb3["Mem_CPU"]
+# rs3 = wb3["Buffer"]
+#
+# for row in rs2.iter_rows(min_row=1, min_col=1):
+#     for cell in row:
+#         print(cell.value)
+
 print("")
 print("The number of device that cannot be telnet is " + str(cannotCount))
 print('Done')
 input("Press Enter to close...")
-sys.exit(0)
-# wb2 = openpyxl.load_workbook('sample2.xlsx')
-# rs1 = wb2.get_sheet_by_name('Mem_CPU')
-# rs1 = wb2.get_sheet_by_name('Buffer')
-# rs1 = wb2.get_sheet_by_name('')
-# #Sheet Summary
-# for row, getval in enumerate(list(ws2.columns)[5], start=1):
-#     if row == 1:
-#         continue
-#     elif row == 2:
-#         continue
-#     else:
-#         print(getval.value)
+sys.exit()
 
 
