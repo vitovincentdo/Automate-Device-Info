@@ -302,7 +302,7 @@ for ip, user, passw in zip(mylistIP, mylistUser, mylistPass):
 
     print("Data with Hostname %s have been inputed" % (hostname))
 
-wb.save('Output.xlsx')
+wb.save('OutputData.xlsx')
 
 print("")
 print("The number of device that cannot be telnet is " + str(cannotCount))
