@@ -5,6 +5,8 @@ from time import sleep
 from netmiko import ConnectHandler
 from collections import OrderedDict
 
+#Define Counter
+cannotCount = 0
 
 # Make Spreadsheet
 wb = openpyxl.Workbook()
@@ -214,7 +216,6 @@ def SheetBuffer():
 
 #Call MakeSpreadsheet function
 MakeSpreadshet()
-cannotCount = 0
 
 # Connect to Devices
 wb2 = openpyxl.load_workbook('DeviceList.xlsx', data_only=True)
