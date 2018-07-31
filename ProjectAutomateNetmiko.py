@@ -218,7 +218,7 @@ def SheetBuffer():
 MakeSpreadshet()
 
 # Connect to Devices
-wb2 = openpyxl.load_workbook('DeviceList.xlsx', data_only=True)
+wb2 = openpyxl.load_workbook('DeviceList2.xlsx', data_only=True)
 rs = wb2["DeviceList"]
 
 mylist = []
@@ -240,17 +240,17 @@ for ip, user, passw in zip(mylistIP, mylistUser, mylistPass):
     sleep(0.1)
     print("Connecting to %s" % (ip))
     try:
-        net_connect = ConnectHandler(device_type='cisco_ios', ip=ip, username=user, password=passw)
+        net_connect = ConnectHandler(device_type='cisco_ios', ip=ip, username=user, password=passw, timeout=5)
         print("Connected to %s" % (ip))
     except:
         print("Reconecting to %s" % (ip))
         try:
-            net_connect = ConnectHandler(device_type='cisco_ios', ip=ip, username=user, password=passw)
+            net_connect = ConnectHandler(device_type='cisco_ios', ip=ip, username=user, password=passw, timeout=5)
             print("Connected to %s" % (ip))
         except:
             print("Reconecting to %s" % (ip))
             try:
-                net_connect = ConnectHandler(device_type='cisco_ios', ip=ip, username=user, password=passw)
+                net_connect = ConnectHandler(device_type='cisco_ios', ip=ip, username=user, password=passw, timeout=5)
                 print("Connected to %s" % (ip))
             except:
                 print("Could not connect to %s\n" % (ip))
@@ -314,7 +314,7 @@ wb.save('OutputData.xlsx')
 #         print(cell.value)
 
 print("")
-print("The number of device that cannot be telnet is " + str(cannotCount))
+print("The number of device that can't connect: " + str(cannotCount))
 print('Done')
 input("Press Enter to close...")
 sys.exit()
