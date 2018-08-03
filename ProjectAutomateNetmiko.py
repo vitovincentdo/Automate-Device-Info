@@ -4,6 +4,7 @@ import sys
 from time import sleep
 from netmiko import ConnectHandler
 from collections import OrderedDict
+import xlwings as xw
 
 #Define Counter
 cannotCount = 0
@@ -213,12 +214,20 @@ def SheetBuffer():
             n = """=IF(F%d<=5,"Excellent",IF(F%d<=10,"Good",IF(F%d<=20,"Fair","Poor")))""" % (row, row, row)
             cellObj.value = n
 
+def forSheetSumary(path1,path2):
+    app = xw.App(visible=False)
+    book = app.books.open(path1)
+    sys.stdout.flush()
+    sleep(5)
+    book.save(path2)
+    app.kill()
+    return openpyxl.load_workbook(path2, data_only=True)
 
 #Call MakeSpreadsheet function
 MakeSpreadshet()
 
 # Connect to Devices
-wb2 = openpyxl.load_workbook('DeviceList2.xlsx', data_only=True)
+wb2 = openpyxl.load_workbook('DeviceList.xlsx', data_only=True)
 rs = wb2["DeviceList"]
 
 mylist = []
@@ -301,22 +310,23 @@ for ip, user, passw in zip(mylistIP, mylistUser, mylistPass):
     # Call function SheetBuffer
     SheetBuffer()
 
-    print("Data with Hostname %s have been inputed" % (hostname))
+    print("Data with Hostname %s have been inputed\n" % (hostname))
 
-wb.save('OutputData.xlsx')
+wb.save('OutputData1.xlsx')
+sys.stdout.flush()
+sleep(5)
 
-# wb3 = openpyxl.load_workbook('OutputData.xlsx', data_only=True)
-# rs2 = wb3["Mem_CPU"]
-# rs3 = wb3["Buffer"]
-#
-# for row in rs2.iter_rows(min_row=1, min_col=1):
-#     for cell in row:
-#         print(cell.value)
+df1 = forSheetSumary("OutputData1.xlsx","OutputData2.xlsx")
+rs2 = df1["Mem_CPU"]
+
+for row in rs2.iter_rows(min_row=1, min_col=1):
+    for cell in row:
+        print(cell.value)
 
 print("")
 print("The number of device that can't connect: " + str(cannotCount))
 print('Done')
-input("Press Enter to close...")
-sys.exit()
+# input("Press Enter to close...")
+# sys.exit()
 
 
