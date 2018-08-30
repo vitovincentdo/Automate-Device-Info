@@ -1,10 +1,16 @@
+import os
 import openpyxl
+from openpyxl.chart import (
+    Reference,
+    BarChart3D,
+)
 import re
 import sys
 from time import sleep
 from netmiko import ConnectHandler
 from collections import OrderedDict
 import xlwings as xw
+
 
 #Define Counter
 cannotCount = 0
@@ -72,13 +78,12 @@ def MakeSpreadshet():
         cell.font = font
         cell.alignment = alignment
     #Write Header4
-    ws4.cell(row=1, column=1).value = 'No'
-    ws4.cell(row=1, column=2).value = 'Hostname'
-    ws4.cell(row=1, column=3).value = 'Memory'
-    ws4.cell(row=1, column=4).value = 'CPU'
-    ws4.cell(row=1, column=5).value = 'Buffers'
-    ws4.cell(row=1, column=6).value = 'Conclusion'
-    for cell in ws3["1:1"]:
+    ws4.cell(row=1, column=1).value = 'Hostname'
+    ws4.cell(row=1, column=2).value = 'Memory'
+    ws4.cell(row=1, column=3).value = 'CPU'
+    ws4.cell(row=1, column=4).value = 'Buffers'
+    ws4.cell(row=1, column=5).value = 'Conclusion'
+    for cell in ws4["1:1"]:
         cell.font = font
         cell.alignment = alignment
 
@@ -214,11 +219,11 @@ def SheetBuffer():
             n = """=IF(F%d<=5,"Excellent",IF(F%d<=10,"Good",IF(F%d<=20,"Fair","Poor")))""" % (row, row, row)
             cellObj.value = n
 
-def forSheetSumary(path1,path2):
+def Compile(path1,path2):
     app = xw.App(visible=False)
     book = app.books.open(path1)
     sys.stdout.flush()
-    sleep(5)
+    sleep(10)
     book.save(path2)
     app.kill()
     return openpyxl.load_workbook(path2, data_only=True)
@@ -249,12 +254,12 @@ for ip, user, passw in zip(mylistIP, mylistUser, mylistPass):
     sleep(0.1)
     print("Connecting to %s" % (ip))
     try:
-        net_connect = ConnectHandler(device_type='cisco_ios', ip=ip, username=user, password=passw, timeout=5)
+        net_connect = ConnectHandler(device_type='cisco_ios', ip=ip, username=user, password=passw, timeout=10)
         print("Connected to %s" % (ip))
     except:
         print("Reconecting to %s" % (ip))
         try:
-            net_connect = ConnectHandler(device_type='cisco_ios', ip=ip, username=user, password=passw, timeout=5)
+            net_connect = ConnectHandler(device_type='cisco_ios', ip=ip, username=user, password=passw, timeout=10)
             print("Connected to %s" % (ip))
         except:
             print("Reconecting to %s" % (ip))
@@ -316,17 +321,76 @@ wb.save('OutputData1.xlsx')
 sys.stdout.flush()
 sleep(5)
 
-df1 = forSheetSumary("OutputData1.xlsx","OutputData2.xlsx")
+df1 = Compile("OutputData1.xlsx","OutputData2.xlsx")
 rs2 = df1["Mem_CPU"]
+rs3 = df1["Buffer"]
+rs4 = df1["Summary"]
+countMaxRow1 = rs2.max_row
+countMaxRow2 = rs3.max_row
 
-for row in rs2.iter_rows(min_row=1, min_col=1):
-    for cell in row:
-        print(cell.value)
+
+# #Summary
+listMemCpu = []
+listBuffer = []
+
+for row in rs2.iter_rows(min_col=1, max_col=10, min_row=3, max_row=countMaxRow1):
+    for index, cell in enumerate(row):
+        if index == 0 and  cell.value != None:
+            listMemCpu.append(cell.value)
+        elif index == 5 and cell.value != None:
+            listMemCpu.append(cell.value)
+        elif index == 9 and cell.value != None:
+            listMemCpu.append(cell.value)
+
+for row in rs3.iter_rows(min_col=1, max_col=7, min_row=2, max_row=countMaxRow2):
+    for index, cell in enumerate(row):
+        if index == 0 and cell.value != None:
+            listBuffer.append(cell.value)
+        elif index == 6 and  cell.value != None:
+            listBuffer.append(cell.value)
+
+r = 2
+c = 1
+for j, val in enumerate(listMemCpu, start=1):
+    rs4.cell(row=r, column=c).value = val
+    c += 1
+    if j % 3 == 0:
+        r += 1
+        c = 1
+
+# r2 = 2
+# c2 = rs4.max_column
+# for j, val in enumerate(listBuffer, start=1):
+#     rs4.cell(row=r2, column=c2).value = val
+#     c += 1
+#     if j % 3 == 0:
+#         r += 1
+#         c = 1
+
+
+# make Chart
+chart = BarChart3D()
+chart.title = "Memory Utilization Chart"
+chart.x_axis.title = "Hostname"
+chart.y_axis.title = "Utilization %"
+chart.y_axis.scaling.max = 60.000
+
+data = Reference(rs2, min_col=5, min_row=3, max_col=5, max_row=countMaxRow1)
+titleObj = Reference(rs2, min_col=1, min_row=3, max_col=1, max_row=countMaxRow1)
+chart.add_data(data, titles_from_data=False)
+chart.set_categories(titleObj)
+chart.legend = None
+
+rs2.add_chart(chart, "L5")
+df1.save("PreventiveMaintenance.xlsx")
+
+os.remove("OutputData1.xlsx")
+os.remove("OutputData2.xlsx")
 
 print("")
 print("The number of device that can't connect: " + str(cannotCount))
 print('Done')
-# input("Press Enter to close...")
-# sys.exit()
+input("Press Enter to close...")
+sys.exit()
 
 
