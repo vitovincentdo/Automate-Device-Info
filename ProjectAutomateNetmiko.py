@@ -327,11 +327,14 @@ rs3 = df1["Buffer"]
 rs4 = df1["Summary"]
 countMaxRow1 = rs2.max_row
 countMaxRow2 = rs3.max_row
+countMaxRow3 = rs4.max_row
 
 
 # #Summary
 listMemCpu = []
 listBuffer = []
+listRecBuf = []
+
 
 for row in rs2.iter_rows(min_col=1, max_col=10, min_row=3, max_row=countMaxRow1):
     for index, cell in enumerate(row):
@@ -344,10 +347,28 @@ for row in rs2.iter_rows(min_col=1, max_col=10, min_row=3, max_row=countMaxRow1)
 
 for row in rs3.iter_rows(min_col=1, max_col=7, min_row=2, max_row=countMaxRow2):
     for index, cell in enumerate(row):
-        if index == 0 and cell.value != None:
+        countExcel = 0
+        countGood = 0
+        countFair = 0
+        countPoor = 0
+
+        if index == 6 and  cell.value != None:
             listBuffer.append(cell.value)
-        elif index == 6 and  cell.value != None:
-            listBuffer.append(cell.value)
+
+        if len(listBuffer) == 6:
+            for i in listBuffer:
+                if i == "Excellent":
+                    countExcel += 1
+                elif i == "Good":
+                    countGood += 1
+                elif i == "Fair":
+                    countFair += 1
+                elif i == "Poor":
+                    countPoor += 1
+            if countExcel == 6:
+                listRecBuf.append("Excellent")
+            listBuffer = []
+df1.save("PreventiveMaintenance.xlsx")
 
 r = 2
 c = 1
@@ -358,14 +379,16 @@ for j, val in enumerate(listMemCpu, start=1):
         r += 1
         c = 1
 
-# r2 = 2
-# c2 = rs4.max_column
-# for j, val in enumerate(listBuffer, start=1):
-#     rs4.cell(row=r2, column=c2).value = val
-#     c += 1
-#     if j % 3 == 0:
-#         r += 1
-#         c = 1
+r2 = 2
+c2 = 4
+for val in listRecBuf:
+    rs4.cell(row=r2, column=c2).value = val
+    r2 += 1
+
+for row in rs4.iter_rows(min_col=1, min_row=2, max_row=countMaxRow3, max_col=4):
+    for index, cell in enumerate(row):
+        print(index)
+        print(cell)
 
 
 # make Chart
