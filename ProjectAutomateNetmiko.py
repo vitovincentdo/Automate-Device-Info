@@ -327,10 +327,24 @@ rs3 = df1["Buffer"]
 rs4 = df1["Summary"]
 countMaxRow1 = rs2.max_row
 countMaxRow2 = rs3.max_row
-countMaxRow3 = rs4.max_row
+
+# make Chart
+chart = BarChart3D()
+chart.title = "Memory Utilization Chart"
+chart.x_axis.title = "Hostname"
+chart.y_axis.title = "Utilization %"
+chart.y_axis.scaling.max = 60.000
+
+data = Reference(rs2, min_col=5, min_row=3, max_col=5, max_row=countMaxRow1)
+titleObj = Reference(rs2, min_col=1, min_row=3, max_col=1, max_row=countMaxRow1)
+chart.add_data(data, titles_from_data=False)
+chart.set_categories(titleObj)
+chart.legend = None
+
+rs2.add_chart(chart, "L5")
 
 
-# #Summary
+ #Summary
 listMemCpu = []
 listBuffer = []
 listRecBuf = []
@@ -368,7 +382,6 @@ for row in rs3.iter_rows(min_col=1, max_col=7, min_row=2, max_row=countMaxRow2):
             if countExcel == 6:
                 listRecBuf.append("Excellent")
             listBuffer = []
-df1.save("PreventiveMaintenance.xlsx")
 
 r = 2
 c = 1
@@ -384,31 +397,61 @@ c2 = 4
 for val in listRecBuf:
     rs4.cell(row=r2, column=c2).value = val
     r2 += 1
+df1.save("OutputData3.xlsx")
+sys.stdout.flush()
+sleep(5)
 
-for row in rs4.iter_rows(min_col=1, min_row=2, max_row=countMaxRow3, max_col=4):
+
+listConcl = []
+wb3 = openpyxl.load_workbook('OutputData3.xlsx', data_only=True)
+rSum = wb3["Summary"]
+countMaxRow3 = rSum.max_row
+for row in rSum.iter_rows(min_col=1, max_col=4, min_row=2, max_row=countMaxRow3):
+    countExcel = 0
+    countGood = 0
+    countFair = 0
+    countPoor = 0
     for index, cell in enumerate(row):
-        print(index)
-        print(cell)
+        if index == 1 and cell.value != None:
+            if cell.value == "Excellent":
+                countExcel += 1
+            elif cell.value == "Good":
+                countGood += 1
+            elif cell.value == "Fair":
+                countFair +=1
+            elif cell.value == "Poor":
+                countPoor += 1
+        elif index == 2 and cell.value != None:
+            if cell.value == "Excellent":
+                countExcel += 1
+            elif cell.value == "Good":
+                countGood += 1
+            elif cell.value == "Fair":
+                countFair +=1
+            elif cell.value == "Poor":
+                countPoor += 1
+        elif index == 3 and cell.value != None:
+            if cell.value == "Excellent":
+                countExcel += 1
+            elif cell.value == "Good":
+                countGood += 1
+            elif cell.value == "Fair":
+                countFair +=1
+            elif cell.value == "Poor":
+                countPoor += 1
+        if countExcel == 3:
+            listConcl.append("No Action Required")
 
-
-# make Chart
-chart = BarChart3D()
-chart.title = "Memory Utilization Chart"
-chart.x_axis.title = "Hostname"
-chart.y_axis.title = "Utilization %"
-chart.y_axis.scaling.max = 60.000
-
-data = Reference(rs2, min_col=5, min_row=3, max_col=5, max_row=countMaxRow1)
-titleObj = Reference(rs2, min_col=1, min_row=3, max_col=1, max_row=countMaxRow1)
-chart.add_data(data, titles_from_data=False)
-chart.set_categories(titleObj)
-chart.legend = None
-
-rs2.add_chart(chart, "L5")
-df1.save("PreventiveMaintenance.xlsx")
+r3 = 2
+c3 = 5
+for val in listConcl:
+    rSum.cell(row=r3, column=c3).value = val
+    r3 += 1
+wb3.save("PreventiveMaintenance.xlsx")
 
 os.remove("OutputData1.xlsx")
 os.remove("OutputData2.xlsx")
+os.remove("OutputData3.xlsx")
 
 print("")
 print("The number of device that can't connect: " + str(cannotCount))
